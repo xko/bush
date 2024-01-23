@@ -1,0 +1,4 @@
+brew? || return 1
+find "$HOME/OneDrive/macbak/Brewfile" -mtime -1 2>/dev/null | read && return 0
+bush.rc.morelines
+(set -x; brew bundle dump --force --brew --tap --cask --file="$HOME/OneDrive/macbak/Brewfile")

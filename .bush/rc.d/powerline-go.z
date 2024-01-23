@@ -1,0 +1,39 @@
+## https://github.com/justjanne/powerline-go
+
+if ! which powerline-go >/dev/null 2>&1; then
+    read -p "powerline-go not installed. Install? " -n 1 -r
+    echo 
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        go install github.com/justjanne/powerline-go@latest
+    fi
+
+fi
+
+[ $WSL_DISTRO_NAME ] && export _os_icon= || export _os_icon=  # <<< don't depend on wsl here
+[ $WSL_DISTRO_NAME ] && export _pl_theme=gruvbox || export _pl_theme=low-contrast
+
+
+function _update_ps1() {
+    local err=$1
+    which powerline-go >/dev/null 2>&1 || return 111
+    PS1="$(powerline-go \
+     -max-width 50 \
+     -hostname-only-if-ssh \
+     -numeric-exit-codes \
+     -trim-ad-domain \
+     -git-mode compact\
+     -modules "venv,host,ssh,cwd,perms,git,hg,exit"\
+     -priority "git-branch,cwd,git-status,cwd-path"\
+     -theme $_pl_theme\
+     -error $err)" 
+}
+
+if [ "$TERM" != "linux" ]; then
+    PROMPT_COMMAND='_update_ps1 $?'"${PROMPT_COMMAND:+;}$PROMPT_COMMAND"
+fi
+
+export LANG=en_US.UTF-8 # without this, fancy symbols are expanded to \xxx  (4 chars instead of 1)
+                        # - bash miscalculates the prompt length and breaks on multiline commands 
+                        # https://unix.stackexchange.com/questions/105958/terminal-prompt-not-wrapping-correctly
+                        # https://unix.stackexchange.com/questions/200255/bash-displays-international-characters-as-escape-sequences
+                        # https://stackoverflow.com/questions/13094248/how-do-i-get-accented-letters-to-actually-work-on-bash 

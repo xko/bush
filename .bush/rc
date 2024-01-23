@@ -1,0 +1,32 @@
+BUSH=${BUSH:-$(dirname ${BASH_SOURCE[0]})}
+source $BUSH/lib
+
+bush! () {
+    source $BUSH/rc
+}
+
+bush.rc.morelines () { 
+    declare -g __bush_rc_morelines=true
+    echo "↓"
+}
+
+bush.rc.nomorelines () {
+    [[ "$__bush_rc_morelines" ]] && {
+        unset __bush_rc_morelines
+        printf "%-62s " "↑"
+    }
+}
+
+
+echo "-> $BUSH"
+_stopwatch=$(bush.stopwatch)
+for _f in $(bush.files "$BUSH/rc.d"); do
+    printf "%-60s " "-> $_f"
+    __stopwatch=$(bush.stopwatch)
+    source $_f 
+    _status=$(bush.redgreen $?)
+    bush.rc.nomorelines
+    echo -n "$_status <- "; eval "$__stopwatch"; echo
+done
+echo -n "<- "
+eval "$_stopwatch"; echo

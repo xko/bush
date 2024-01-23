@@ -1,0 +1,27 @@
+brew? () {
+    [[ "$HOMEBREW_PREFIX" ]] && return 0
+    [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)" && return 0
+    [[ -x /usr/local/bin/brew ]] && eval "$(/usr/local/bin/brew shellenv)" && return 0
+    echo -n "Brew is missing!"
+    return 1
+}
+brew? || return $?
+
+export PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
+export MANPATH="/opt/homebrew/opt/gnu-sed/libexec/gnuman:$MANPATH"
+export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+export MANPATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$MANPATH"
+export PATH="/opt/homebrew/opt/python3/libexec/bin:$PATH"
+
+brew-deps? () {
+    local brewfile=${1:-$BUSH/Brewfile}
+    [[ -f "$brewfile" ]] || return 0
+    brew bundle check -q --file "$brewfile" >/dev/null 2>&1 && return 0
+    bush.rc.morelines
+    brew bundle check -v --file "$brewfile" && return 0
+    bush.ask "Install?" "\n" || return 2        
+    brew bundle -q --file "$brewfile" --no-lock 
+}
+brew-deps? || return $?
+
+[[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"

@@ -1,0 +1,10 @@
+brew "bash-completion@2" # pulls bash too
+brew "coreutils"
+brew "flock"
+brew "git"
+brew "gnu-sed"
+brew "go"
+brew "nmap"
+brew "wget"
+brew "python3"
+brew "tere"
