@@ -1,0 +1,10 @@
+# JetBrains toolbox will put the scripts here
+export PATH="$PATH:/Users/muu9036/Library/Application Support/JetBrains/Toolbox/scripts"
+
+function i {
+    if [ "$@" ]; then idea $@ 
+    else              idea .
+    fi
+}
+
+HISTIGNORE="${HISTIGNORE:+"$HISTIGNORE:"}i"

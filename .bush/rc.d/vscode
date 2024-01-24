@@ -8,4 +8,4 @@ function c {
     fi
 }
 
-HISTIGNORE=="${HISTIGNORE:+"$HISTIGNORE:"}c"
+HISTIGNORE="${HISTIGNORE:+"$HISTIGNORE:"}c"

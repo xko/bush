@@ -1,27 +1,33 @@
-bush.files() {
+b.files() {
     find -L "$1" \( -type f -not -name "*-" -print \) -or \( -type d -name "*-" -prune \)  | uniq | rev | sort | rev
 }
 
-bush.ask() {
+b.yes?() {
     local prompt="${1:-"Continue?"}"
     read -p "$prompt " -n 1 -r
     printf "$2"
     [[ $REPLY =~ ^[Yy]$ ]] 
 } 
 
-bush.green() {
+b.green() {
     printf "\e[1;32m$1\e[1;0m"
 }
-bush.red() {
+b.red() {
     printf "\e[1;31m$1\e[1;0m"
 }
 
-bush.redgreen() {
-    [[ "$1" == "0" ]] && bush.green "$1" 
-    [[ "$1" != "0" ]] && bush.red "$1"
+b.redgreen() {
+    [[ "$1" == "0" ]] && b.green "$1" 
+    [[ "$1" != "0" ]] && b.red "$1"
 }
 
-bush.stopwatch() {
+b.stopwatch() {
     local start=$(perl -MTime::HiRes=time -e 'printf "%.9f", time')
     echo -n "perl -MTime::HiRes=time -e 'printf \"%.3f\", time - $start'"
+} 
+
+b.have?() {
+    type $1 &>/dev/null && return 0
+    echo -n "Missing $1!" 
+    return 1
 } 

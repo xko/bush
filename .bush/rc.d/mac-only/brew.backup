@@ -1,5 +1,5 @@
 brew? || return 1
 find "$HOME/.Brewfile.$HOSTNAME" -mtime -1 2>/dev/null | read && return 0
 
-bush.rc.morelines
+b.rc.morelines
 (set -x; brew bundle dump --force --brew --tap --cask --file="$HOME/.Brewfile.$HOSTNAME")

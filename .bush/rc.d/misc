@@ -10,4 +10,12 @@ shopt -s checkwinsize
 alias ll='ls -AlFh'
 alias la='ls -alF'
 
-HISTIGNORE=="${HISTIGNORE:+"$HISTIGNORE:"}ll *:la *"
+HISTIGNORE="${HISTIGNORE:+"$HISTIGNORE:"}ll *:la *"
+
+alias path="tr ':' '\n' <<< \"\$PATH\""
+
+export LANG=en_US.UTF-8 # without this, fancy symbols are expanded to \xxx  (4 chars instead of 1)
+                        # - bash miscalculates the prompt length and breaks on multiline commands 
+                        # https://unix.stackexchange.com/questions/105958/terminal-prompt-not-wrapping-correctly
+                        # https://unix.stackexchange.com/questions/200255/bash-displays-international-characters-as-escape-sequences
+                        # https://stackoverflow.com/questions/13094248/how-do-i-get-accented-letters-to-actually-work-on-bash 

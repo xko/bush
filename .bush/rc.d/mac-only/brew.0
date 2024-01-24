@@ -17,9 +17,9 @@ brew-deps? () {
     local brewfile=${1:-$BUSH/Brewfile}
     [[ -f "$brewfile" ]] || return 0
     brew bundle check -q --file "$brewfile" >/dev/null 2>&1 && return 0
-    bush.rc.morelines
+    b.rc.morelines
     brew bundle check -v --file "$brewfile" && return 0
-    bush.ask "Install?" "\n" || return 2        
+    b.yes? "Install?" "\n" || return 2        
     brew bundle -q --file "$brewfile" --no-lock 
 }
 brew-deps? || return $?
