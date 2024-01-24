@@ -1,0 +1,11 @@
+export EDITOR="code --wait"
+export VISUAL="code"
+git config --global core.editor "code --wait" 
+
+function c {
+    if [ "$@" ]; then code $@ 
+    else              code .
+    fi
+}
+
+HISTIGNORE=="${HISTIGNORE:+"$HISTIGNORE:"}c"
