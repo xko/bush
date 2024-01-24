@@ -1,0 +1,2 @@
+find "$HOME/.bash_history.$HOSTNAME" -mtime -1 2>/dev/null | read && return 0
+cp "$HOME/.bash_history" "$HOME/.bash_history.$HOSTNAME"
