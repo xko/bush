@@ -22,5 +22,10 @@ keepassxc.auth? () {
     keepassxc?
 }
 
+keepassxc.get () {
+    keepassxc.auth? || return 3
+    b.rc.morelines
+    ( set -x; keepassxc_proxy_client get ~/.keepassxc_proxy_client.json $1 )
+}
 
 keepassxc.auth? 
