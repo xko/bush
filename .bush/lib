@@ -20,19 +20,21 @@ b.stopwatch () {
     echo -n "perl -MTime::HiRes=time -e 'printf \"%.3f\", time - $start'"
 } 
 
+b.linesep () {
+    [[ "$b_1linemode" ]] && echo -n " " || echo    
+}
+
 b.yes? () {
     local prompt="${1:-"Continue?"}"
-    BUSH=${BUSH:-$(dirname ${BASH_SOURCE[0]})}
-    local tail=${2:-${b_1linesep:-$'\n'}}
     read -p "$prompt " -n 1 -r
-    printf "$tail"
+    b.linesep
     [[ $REPLY =~ ^[Yy]$ ]] 
 } 
 
 
 b.have? () {
     type $1 &>/dev/null && return 0
-    local tail=${b_1linesep:-$'\n'}
-    echo -n "Missing $1!$tail" 
+    echo -n "Missing $1!"
+    b.linesep 
     return 1
 } 

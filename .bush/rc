@@ -6,21 +6,19 @@ bush! () {
 }
 
 
-declare -g b_1linesep=" "
-
+declare -g b_1linemode
 b.rc.morelines () { 
-    [[ -n "$b_1linesep" ]] && echo "↓"
-    unset b_1linesep
+    [[ "$b_1linemode" ]] && echo "↓"
+    unset b_1linemode
 }
-
 b.rc.nomorelines () {
-    [[ -n "$b_1linesep" ]] || {
-        b_1linesep=" "
+    [[ "$b_1linemode" ]] || {
         printf "%-62s " "↑"
+        b_1linemode=true
     }
 }
 
-
+b_1linemode=true
 echo "-> $BUSH"
 _stopwatch=$(b.stopwatch)
 for _f in $(b.files "$BUSH/rc.d"); do
@@ -33,4 +31,4 @@ for _f in $(b.files "$BUSH/rc.d"); do
 done
 echo -n "<- "
 eval "$_stopwatch"; echo
-unset b_1linesep
+unset b_1linemode
