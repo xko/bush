@@ -5,14 +5,17 @@ bush! () {
     source $BUSH/rc
 }
 
+
+declare -g b_1linesep=" "
+
 b.rc.morelines () { 
-    declare -g __b_rc_morelines=true
-    echo "↓"
+    [[ -n "$b_1linesep" ]] && echo "↓"
+    unset b_1linesep
 }
 
 b.rc.nomorelines () {
-    [[ "$__b_rc_morelines" ]] && {
-        unset __b_rc_morelines
+    [[ -n "$b_1linesep" ]] || {
+        b_1linesep=" "
         printf "%-62s " "↑"
     }
 }
@@ -30,3 +33,4 @@ for _f in $(b.files "$BUSH/rc.d"); do
 done
 echo -n "<- "
 eval "$_stopwatch"; echo
+unset b_1linesep
