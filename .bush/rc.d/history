@@ -1,7 +1,7 @@
 ## https://unix.stackexchange.com/a/18443
 HISTCONTROL=ignoredups:erasedups
 shopt -s histappend
-PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
+PROMPT_COMMAND="history -n; history -w; history -c; history -r${PROMPT_COMMAND:+;}$PROMPT_COMMAND"
 
 HISTSIZE=50000
 HISTFILESIZE=1000000
