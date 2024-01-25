@@ -1,0 +1,26 @@
+keepassxc_proxy_client? () {
+    b.have? keepassxc_proxy_client && return 0
+    b.yes? " Install?" || return 1
+    b.have? pip3 || return 22
+    b.rc.morelines
+    (set -x; pip3 install keepassxc_proxy_client) || return 33
+} 
+
+keepassxc? () {
+    local TEST_URL=https://medium.com
+    keepassxc_proxy_client get ~/.keepassxc_proxy_client.json $TEST_URL >/dev/null 2>&1
+}
+
+keepassxc.auth? () {
+    keepassxc? && return 0
+    keepassxc_proxy_client? || return 1
+    b.yes? "Is keepassxc open?" || return 2
+    keepassxc? && return 0
+    b.rc.morelines
+    echo "Authenticating to keepassxc.." 
+    (set -x; keepassxc_proxy_client create > ~/.keepassxc_proxy_client.json) || return 3
+    keepassxc?
+}
+
+
+keepassxc.auth? 
