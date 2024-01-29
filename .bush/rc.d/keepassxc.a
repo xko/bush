@@ -1,4 +1,4 @@
-keepassxc_proxy_client? () {
+keepassxc_proxy_client. () {
     b.have? keepassxc_proxy_client && return 0
     b.yes? " Install?" || return 1
     b.have? pip3 || return 22
@@ -11,9 +11,9 @@ keepassxc? () {
     keepassxc_proxy_client get ~/.keepassxc_proxy_client.json $TEST_URL >/dev/null 2>&1
 }
 
-keepassxc.auth? () {
+keepassxc. () {
     keepassxc? && return 0
-    keepassxc_proxy_client? || return 1
+    keepassxc_proxy_client. || return 1
     b.yes? "Is keepassxc open?" || return 2
     keepassxc? && return 0
     b.rc.morelines
@@ -23,9 +23,9 @@ keepassxc.auth? () {
 }
 
 keepassxc.get () {
-    keepassxc.auth? || return 3
+    keepassxc. || return 3
     b.rc.morelines
     ( set -x; keepassxc_proxy_client get ~/.keepassxc_proxy_client.json $1 )
 }
 
-keepassxc.auth? 
+keepassxc. 
