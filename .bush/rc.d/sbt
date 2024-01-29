@@ -1,1 +1,1 @@
-export SBT_OPTS=-Xmx4g
+export SBT_OPTS="-Xmx4g -Dhttps.protocols=TLSv1.2 -Djava.net.preferIPv4Stack=true"
