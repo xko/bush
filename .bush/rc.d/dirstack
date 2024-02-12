@@ -57,7 +57,7 @@ dirstack.write() {
     )  9>$DIRSTACK_FILE.lock &  ) 
 }
 
-PROMPT_COMMAND="$PROMPT_COMMAND;dirstack.read;dirstack.write"
+PROMPT_COMMAND="$PROMPT_COMMAND${PROMPT_COMMAND:+;}dirstack.read;dirstack.write"
 
 function d {
     if [ "$@" ]; then dirstack.push "$@" 
