@@ -1,0 +1,227 @@
+DIRSTACK_FILE=$HOME/.dirstack
+
+dirstack.print() {
+    dirs -p -l | tail -n +2
+}
+
+dirstack.show() {
+    dirs -p | tail -n +2
+}
+
+dirstack.push() {
+    pushd "$@" >/dev/null 
+    pushd . >/dev/null   
+}
+
+dirstack.del() {
+    popd +$(($1+1)) >/dev/null
+}
+
+dirstack.go() {
+    popd      >/dev/null
+    pushd +$1 >/dev/null
+    pushd .   >/dev/null
+}
+
+dirstack.read() { 
+    is_new() { 
+        local old
+        while read old; do
+            [[ "$1" == "$old" ]] && return 1
+        done
+        return 0
+    }
+    local dirs
+    collect() {
+        local line
+        while read line; do
+            if [[ $line ]] && is_new "$line" <<< $dirs; then
+                if [[ "$dirs" ]]; then dirs="$line"$'\n'"$dirs"
+                                  else dirs="$line"
+                fi
+            fi
+        done 
+    }
+    collect < <(dirstack.print) 
+    collect < "$DIRSTACK_FILE"
+    dirs -c 
+    while read line; do
+        builtin pushd -n "$line" >/dev/null
+    done <<< $dirs
+}
+
+dirstack.write() { 
+    ( (
+        flock -x -w 2 9 || { echo -n "can't lock $DIRSTACK_FILE.lock"; return 1; }
+        dirstack.print > "$DIRSTACK_FILE"
+    )  9>$DIRSTACK_FILE.lock &  ) 
+}
+
+PROMPT_COMMAND="$PROMPT_COMMAND;dirstack.read;dirstack.write"
+
+function d {
+    if [ "$@" ]; then dirstack.push "$@" 
+    else dirstack.select
+    fi 
+}
+
+alias d.="d ."
+alias ..="cd .."
+
+complete -o nospace -F _cd d
+
+HISTIGNORE="${HISTIGNORE:+"$HISTIGNORE:"}d"
+
+
+## based on https://unix.stackexchange.com/questions/146570/arrow-key-enter-menu/415155#415155
+
+function dirstack.select {
+    # https://unix.stackexchange.com/a/674822/571574
+    # https://www.gnu.org/software/bash/manual/html_node/ANSI_002dC-Quoting.html
+    local ESC=$'\33'
+    local BSPACE=$'\10'
+    local DEL=$'\177'
+    local ENTER=$'\12' 
+
+    read_key() {  
+
+        read  -rsN1 key 2>/dev/null >&2
+        if [[ $key = $ESC ]]; then 
+            read -rsN1 key 2>/dev/null >&2
+            if   [[ $key = $ESC ]]; then echo esc 
+            elif [[ "$key" = "[" ]]; then 
+                read  -rsN1 key 2>/dev/null >&2
+                if [[ "$key" = "A" ]]; then echo up;   fi
+                if [[ "$key" = "B" ]]; then echo down; fi
+                if [[ "$key" = "3" ]]; then 
+                    read -rsN1 key 2>/dev/null >&2
+                    if [[ "$key" = "~" ]]; then echo del; fi
+                fi 
+            elif [[ "$key" = "O" ]];then 
+                read  -rsn1 key 2>/dev/null >&2
+                if [[ "$key" = "P" ]]; then echo f1;   fi
+                if [[ "$key" = "Q" ]]; then echo f2;   fi
+                if [[ "$key" = "R" ]]; then echo f3;   fi
+                if [[ "$key" = "S" ]]; then echo f4;   fi
+            fi
+        elif [[ "$key" == "$BSPACE" ]]; then echo bs # <<< doesn't work on mac
+        elif [[ "$key" == "$DEL" ]]; then echo bs
+        elif [[ "$key" == "$ENTER" ]]; then echo enter 
+        else echo "$key"; fi
+    }
+
+
+    clean_line()       { printf  '%*s' "${COLUMNS:-$(tput cols)}" ''; }  
+    cursor_blink_on()  { printf "$ESC[?25h"; }
+    cursor_blink_off() { printf "$ESC[?25l"; }
+    cursor_to()        { printf "$ESC[$1;${2:-1}H"; }
+    get_cursor_row()   { IFS=';' read -sdR -p $'\E[6n' ROW COL; echo ${ROW#*[}; }
+
+    local hlstart="$ESC[4m" # https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
+    local hlend="$ESC[24m"
+    print_option()     { 
+        if [[ "$filter" ]]; then
+            printf " ${1//${filter}/$hlstart$filter$hlend} "  # https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html#:~:text=%24%7Bparameter/pattern/string%7D
+        else
+            printf " $1 "
+        fi
+    }
+    print_selected()   { 
+        printf "$ESC[7m"
+        print_option "$1"
+        printf "$ESC[27m"
+    }
+
+    local -a dirs
+    mapfile -t dirs < <(dirstack.show) # https://stackoverflow.com/a/11395181/1964213
+                                       # `dirs -p | mapfile dirs` didn't work. why?   
+
+    local total=${#dirs[@]}
+    for i in $(seq 1 $total); do 
+        printf '\n'
+    done
+
+    local lastrow=$(get_cursor_row)
+    local startrow=$(($lastrow - $total))
+
+    # printf '\n'  # space for status line
+
+    local selected=0
+    local filter=""
+
+    redraw() {
+        cursor_to $startrow
+        for i in $(seq 1 $total ); do 
+            clean_line
+        done
+        # clean_line # status line
+
+        local screen_idx=0
+        local idx=0
+        cursor_to $startrow
+        for opt in "${dirs[@]}"; do
+            if [[ "$opt" == *"$filter"* ]]; then
+                cursor_to $(($startrow + $screen_idx))
+                if (( $idx == $selected )); then
+                    print_selected "$opt"
+                else
+                    print_option "$opt"
+                fi
+                ((screen_idx++))
+            fi
+            ((idx++))
+        done
+        # printf "\n${filter}" # status line
+    }
+
+    lookup() {
+        local stopat=$1
+        if (( $stopat < 0 )); then stopat=$((${#dirs[@]} - 1)); fi
+        if (( $selected < 0 )); then selected=$((${#dirs[@]} - 1)); fi
+        if [[ "${dirs[$selected]}" == *"$filter"* ]]; then return; fi
+        if (( $selected == $stopat )); then return; fi
+        ((selected--))
+        lookup $stopat
+    } 
+
+    lookdown() {
+        local stopat=$1
+        if (( $stopat >= ${#dirs[@]} )); then stopat=0; fi
+        if (( $selected >= ${#dirs[@]} )); then selected=0; fi
+        if [[ "${dirs[$selected]}" == *"$filter"* ]]; then return; fi
+        if (( $selected == $stopat )); then return; fi
+        ((selected++))
+        lookdown $stopat
+    } 
+
+    # ensure cursor and input echoing back on upon a ctrl+c during read -s
+    trap "cursor_blink_on; stty echo; printf '\n'; exit" 2
+    cursor_blink_off
+
+    trap break SIGINT
+    while true; do
+        redraw
+
+        key=$(read_key)
+        case "$key" in
+            esc)   break;;
+            enter) dirstack.go $selected
+                   break;;
+            del)   dirstack.del $selected 
+                   dirstack.write
+                   mapfile -t dirs < <(dirstack.show) 
+                   lookup $selected;;
+            up)    lookup   $((selected--));;
+            down)  lookdown $((selected++));;
+            bs)    filter="$(head -c-2 <<< $filter)" ;;
+            *)     filter="$filter$key"; lookdown $((selected-1)) ;;
+        esac
+ 
+    done
+
+    # cursor position back to normal
+    cursor_to $lastrow
+    cursor_blink_on
+
+    # return $selected
+}
