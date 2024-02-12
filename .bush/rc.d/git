@@ -1,0 +1,85 @@
+alias gs="git status"
+
+function gc {
+  local msg="$@"
+  git commit -m "$msg"
+}
+
+function ga {
+  [ -z "$@" ] && git add .
+  [ -n "$@" ] && git add "$@" 
+}
+
+__git_complete ga git_add
+
+HISTIGNORE="${HISTIGNORE:+"$HISTIGNORE:"}git status:gs:g.fetchmaster"
+
+
+alias g.fetchbranch="git fetch && git fetch origin"
+
+alias g.fetchmaster="git fetch && git fetch origin master:master"
+
+alias g.stashpull="git stash && git pull && git stash pop"
+
+alias g.chmod="git add --chmod=+x --" 
+
+function g.repo-root {
+  ! git rev-parse --is-inside-work-tree >/dev/null >/dev/null && echo "$PWD is not under git worktree" && return 2  
+  git rev-parse --show-toplevel
+}
+
+function g.import-dir {
+    ## https://stackoverflow.com/a/30386041/1964213
+    [ -z "$1" ] && type g.import-dir && return 1 
+    local fromrepo="$1"                                     
+    local fromdir="$2" # can be '', means root of the repo
+    local frombranch="${3:-master}"
+    local torepo=$(g.repo-root)
+    local toprefix=$(realpath --relative-to="$torepo" "$PWD")
+
+    pushd "$torepo" >/dev/null
+    echo "COPY from $fromrepo#$frombranch/$fromdir"
+    echo "to $(readlink -f $toprefix), repo root: $PWD"
+    echo "Will overwrite existing, will NOT delete new"
+    x.askY || return 2
+
+    git remote rm __tmp 2>/dev/null
+    ( set -x 
+      git remote add -f -t $frombranch --no-tags __tmp "$fromrepo" 
+      git read-tree --prefix="__tmp" -u "__tmp/$frombranch:$fromdir" 
+      cp -r __tmp/* "$prefix/" &&  git rm -rf __tmp
+    )
+    # git remote rm __tmp 2>/dev/null
+    echo "g.import-dir '$fromrepo' '$fromdir' '$frombranch'" > $prefix/source-me-to-reimport.sh
+
+    popd >/dev/null
+}
+
+function g.merge-dir-to-dir {
+    ## https://stackoverflow.com/a/30386041/1964213
+    ## https://stackoverflow.com/a/66545626/1964213
+    [ -z "$1" ] && return 1 
+    local fromrepo="$1"                                     
+    local fromdir="$2" # can be '', means root of the repo
+    local frombranch="${3:-master}"
+    local torepo=$(g.repo-root)
+    local toprefix=$(realpath --relative-to="$torepo" "$PWD")
+    local tobranch="$(git branch --show-current)"
+
+    pushd "$torepo" >/dev/null
+    echo "MERGE from $fromrepo#$frombranch/$fromdir"
+    echo "to $(readlink -f "$toprefix"), repo root: $PWD, branch: $tobranch"
+    x.askY || return 2
+
+    git remote rm __tmp 2>/dev/null
+    ( set -x 
+      git remote add -f -t $frombranch --no-tags __tmp "$fromrepo"
+      git checkout "__tmp/$frombranch"
+      git subtree split -P "$fromdir" -b __tmp_tmp
+      git checkout "$tobranch"
+      git merge -s subtree -Xsubtree="src" fruits-src --allow-unrelated-histories --no-commit
+    )
+    popd >/dev/null
+
+} 
+
