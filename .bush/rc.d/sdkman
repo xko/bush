@@ -1,0 +1,16 @@
+export SDKMAN_DIR="$HOME/.sdkman"
+
+
+sdkman.installed. () {
+    b.have? "$SDKMAN_DIR/bin/sdkman-init.sh" && return 0 
+    b.yes? "Install sdkman?" || return 1
+    b.morelines
+    curl -s "https://get.sdkman.io?rcupdate=false" | bash
+}
+
+sdkman.loaded? () {
+    type sdk >/dev/null 2>/dev/null
+}
+
+sdkman.installed. || return 1
+sdkman.loaded? || source "$SDKMAN_DIR/bin/sdkman-init.sh"
