@@ -1,0 +1,11 @@
+[[ $(launchctl getenv PATH) == *"$PATH"*  ]] && return 0
+b.rc.morelines
+echo "Gloabal path changed:"
+echo "$PATH" | tr : '\n'
+b.yes? "Store?" || return        
+launchctl setenv PATH "$PATH"
+(set -x; sudo launchctl config user path "$PATH" )
+# https://stackoverflow.com/a/70510488/1964213
+# to remove 
+# sudo defaults delete /private/var/db/com.apple.xpc.launchd/config/user.plist PathEnvironmentVariable
+ 
