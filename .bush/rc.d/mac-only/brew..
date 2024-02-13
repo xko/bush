@@ -1,5 +1,5 @@
 brew? () {
-    [[ "$HOMEBREW_PREFIX" ]] && return 0
+    b.have? brew && return 0 
     [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)" && return 0
     [[ -x /usr/local/bin/brew ]] && eval "$(/usr/local/bin/brew shellenv)" && return 0
     echo -n "Brew is missing!"
@@ -24,4 +24,4 @@ brew-deps? () {
 }
 brew-deps? || return $?
 
-[[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+[[ -r "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh" ]] && . "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh"
