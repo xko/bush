@@ -77,6 +77,7 @@ HISTIGNORE="${HISTIGNORE:+"$HISTIGNORE:"}d"
 
 function dirstack.select {
     # https://unix.stackexchange.com/a/674822/571574
+    # https://stackoverflow.com/a/13280173/1964213
     # https://www.gnu.org/software/bash/manual/html_node/ANSI_002dC-Quoting.html
     local ESC=$'\33'
     local BSPACE=$'\10'
@@ -86,9 +87,9 @@ function dirstack.select {
     read_key() {  
 
         read  -rsN1 key 2>/dev/null >&2
-        if [[ $key = $ESC ]]; then 
+        if [[ "$key" =" $ESC" ]]; then 
             read -rsN1 key 2>/dev/null >&2
-            if   [[ $key = $ESC ]]; then echo esc 
+            if   [[ "$key" = "$ESC" ]]; then echo esc 
             elif [[ "$key" = "[" ]]; then 
                 read  -rsN1 key 2>/dev/null >&2
                 if [[ "$key" = "A" ]]; then echo up;   fi
@@ -104,9 +105,9 @@ function dirstack.select {
                 if [[ "$key" = "R" ]]; then echo f3;   fi
                 if [[ "$key" = "S" ]]; then echo f4;   fi
             fi
-        elif [[ "$key" == "$BSPACE" ]]; then echo bs # <<< doesn't work on mac
-        elif [[ "$key" == "$DEL" ]]; then echo bs
-        elif [[ "$key" == "$ENTER" ]]; then echo enter 
+        elif [[ "$key" = "$BSPACE" ]]; then echo bs # ^^^ doesn't work on mac
+        elif [[ "$key" = "$DEL" ]]; then echo bs
+        elif [[ "$key" = "$ENTER" ]]; then echo enter 
         else echo "$key"; fi
     }
 
