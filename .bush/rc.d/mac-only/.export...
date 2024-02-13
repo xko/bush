@@ -1,9 +1,7 @@
 export () {
-    local name="${1%%=*}" # https://stackoverflow.com/a/965072/1964213
+    # https://stackoverflow.com/a/965072/1964213
+    local name="${1%%=*}"
     local value="${1#*=}"
     builtin export "$@"
-    launchctl setenv "$name" "$value"
-    # b.rc.morelines
-    # echo "$@"
-    # [[ "$name" == PATH ]] || launchctl setenv "$name" "$value" # doesn't propagate for path, see .storepath instead
+    [[ "$name" == "PATH" ]] || launchctl setenv "$name" "$value" # setenv doesn't propagate PATH, see .storepath instead
 }
