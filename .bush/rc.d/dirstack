@@ -87,7 +87,7 @@ function dirstack.select {
     read_key() {  
 
         read  -rsN1 key 2>/dev/null >&2
-        if [[ "$key" =" $ESC" ]]; then 
+        if [[ "$key" = "$ESC" ]]; then 
             read -rsN1 key 2>/dev/null >&2
             if   [[ "$key" = "$ESC" ]]; then echo esc 
             elif [[ "$key" = "[" ]]; then 
