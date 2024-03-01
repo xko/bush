@@ -1,0 +1,16 @@
+dr.lastimage () {
+    docker images | awk '{print $1}' | awk 'NR==2' # https://stackoverflow.com/a/50794386/1964213
+}
+
+dr.run () {
+    local _image=${1:-$(dr.lastimage)}
+    [ "$_image" ] || return 1
+    ( set -x ; docker run --rm "$_image" )
+}
+
+dr.sh () {
+    local _image=${1:-$(dr.lastimage)}
+    [ "$_image" ] || return 1
+    ( set -x ; docker run -it --rm --entrypoint //bin/bash "$_image" )
+}
+
