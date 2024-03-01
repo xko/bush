@@ -20,7 +20,8 @@ b.stopwatch () {
     echo -n "perl -MTime::HiRes=time -e 'printf \"%.3f\", time - $start'"
 } 
 
-b.linesep () { # >>> $(b.linesep) wont't work, it swallows trailing newlines:  https://stackoverflow.com/a/15184414/1964213 
+b.linesep () { # >>> $() swallows trailing newlines, so $(b.linesep) won't work
+               # https://stackoverflow.com/a/15184414/1964213 
     [[ "$b_1linemode" ]] && echo -n " " || echo    
 }
 
