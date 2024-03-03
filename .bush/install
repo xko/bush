@@ -3,5 +3,5 @@
 cd "$HOME"
 git init
 git remote add -f _bush https://github.com/xko/bush.git
-git merge --no-commit _bush/mac
+git merge --allow-unrelated-histories _bush/mac
 )
