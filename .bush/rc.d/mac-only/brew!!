@@ -13,7 +13,7 @@ export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
 export MANPATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$MANPATH"
 export PATH="/opt/homebrew/opt/python3/libexec/bin:$PATH"
 
-brew-deps? () {
+brew.deps. () {
     local brewfile=${1:-$BUSH/Brewfile}
     [[ -f "$brewfile" ]] || return 0
     brew bundle check -q --file "$brewfile" >/dev/null 2>&1 && return 0
@@ -23,6 +23,6 @@ brew-deps? () {
     brew bundle -q --file "$brewfile" --no-lock 
 }
 
-brew-deps? || return $?
+brew.deps. || return $?
 
 [[ -r "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh" ]] && . "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh"
