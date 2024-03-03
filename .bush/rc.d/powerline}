@@ -5,7 +5,7 @@ powerline? () {
     b.have? powerline-go && return 0
     b.yes? " Install?" || return 1
     b.have? go || return 22
-    b.rc.morelines
+    b.morelines
     (set -x; go install github.com/justjanne/powerline-go@latest)
 }
 

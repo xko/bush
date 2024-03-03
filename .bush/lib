@@ -20,6 +20,21 @@ b.stopwatch () {
     echo -n "perl -MTime::HiRes=time -e 'printf \"%.3f\", time - $start'"
 } 
 
+
+BUSH_IOMODE="(1line)"
+
+b.morelines () { 
+    [[ "$BUSH_IOMODE" == *"(1line)"* ]] && echo "↓"
+    BUSH_IOMODE=${BUSH_IOMODE/"(1line)"/}
+}
+
+b.oneline () {
+    [[ "$BUSH_IOMODE" == *"(1line)"* ]] && return 0
+    BUSH_IOMODE="$BUSH_IOMODE(1line)"
+    return 1
+}
+
+
 b.linesep () { # >>> $() swallows trailing newlines, so $(b.linesep) won't work
                # https://stackoverflow.com/a/15184414/1964213 
     [[ "$b_1linemode" ]] && echo -n " " || echo    
