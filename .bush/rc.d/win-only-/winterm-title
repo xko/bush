@@ -1,7 +1,0 @@
-function _reverse_pwd() {
-  local __r=$?
-  pwd | sed -e "s;^$HOME;~;" | tr '/' '\n' | tac | sed -z '$ s/\n$//' | tr '\n' '\\'
-  return $__r
-}
-
-PROMPT_COMMAND='printf "\033]0;%s\a" "$PWD"'${PROMPT_COMMAND:+;}${PROMPT_COMMAND}
