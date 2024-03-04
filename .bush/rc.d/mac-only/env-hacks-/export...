@@ -1,7 +1,0 @@
-export () {
-    # https://stackoverflow.com/a/965072/1964213
-    local name="${1%%=*}"
-    local value="${1#*=}"
-    builtin export "$@"
-    [[ "$name" == "PATH" ]] || launchctl setenv "$name" "$value" # setenv doesn't propagate PATH, see .storepath instead
-}
