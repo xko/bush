@@ -40,7 +40,7 @@ b.oneline () {
     return 1
 }
 
-b.linesep () { # https://stackoverflow.com/a/15184414/1964213 
+b.linesep () { # https://stackoverflow.com/a/15184414/1964213 - trailing new line 
     b.oneline? && echo -n " " || echo    
 }
 
