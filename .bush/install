@@ -1,7 +1,5 @@
 #! /usr/bin/env bash
-( set -x;
-cd "$HOME"
-git init
-git remote add -f _bush https://github.com/xko/bush.git
-git merge --allow-unrelated-histories _bush/mac
-)
+eval "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+execute_sudo sh -c "echo $HOMEBREW_PREFIX/bin > /etc/paths.d/homebrew"
+eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
+curl -fsSL https://raw.githubusercontent.com/xko/bush/mac/.bush/Brewfile brew | bundle -q --file=- --no-lock
