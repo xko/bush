@@ -4,3 +4,4 @@ execute_sudo bash -c "printf '%s\n%s\n' \"$HOMEBREW_PREFIX/bin\" \"\$(cat /etc/p
 
 eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
 curl -fsSL https://raw.githubusercontent.com/xko/bush/mac/.bush/Brewfile | brew bundle -q --file=- --no-lock
+chsh -s "$(which bash)"
