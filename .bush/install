@@ -13,7 +13,9 @@ execute chsh -s "$HOMEBREW_PREFIX/bin/bash"
 brew tap homebrew/cask-fonts
 brew install --cask font-jetbrains-mono-nerd-font
 
-git remote add -f bush https://github.com/xko/bush
+cd "$HOME"
+git init
+git remote | grep -e "^bush$" >/dev/null || git remote add -f bush https://github.com/xko/bush
 git merge bush/mac
 
 brew install --cask iterm2
