@@ -6,4 +6,14 @@ eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
 curl -fsSL https://raw.githubusercontent.com/xko/bush/mac/.bush/Brewfile | brew bundle -q --file=- --no-lock
 
 execute_sudo bash -c "echo $HOMEBREW_PREFIX/bin/bash >> /etc/shells"
+
+ohai  chsh -s "$HOMEBREW_PREFIX/bin/bash"
 execute chsh -s "$HOMEBREW_PREFIX/bin/bash"
+
+brew tap homebrew/cask-fonts
+brew install --cask font-jetbrains-mono-nerd-font
+
+git remote add -f bush https://github.com/xko/bush
+git merge bush/mac
+
+brew install --cask iterm2
