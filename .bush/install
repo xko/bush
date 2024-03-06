@@ -6,4 +6,4 @@ eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
 curl -fsSL https://raw.githubusercontent.com/xko/bush/mac/.bush/Brewfile | brew bundle -q --file=- --no-lock
 
 execute_sudo bash -c "echo $HOMEBREW_PREFIX/bin/bash >> /etc/shells"
-chsh -s "$(which bash)"
+execute chsh -s "$HOMEBREW_PREFIX/bin/bash"
