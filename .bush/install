@@ -7,15 +7,21 @@ curl -fsSL https://raw.githubusercontent.com/xko/bush/mac/.bush/Brewfile | brew 
 
 execute_sudo bash -c "echo $HOMEBREW_PREFIX/bin/bash >> /etc/shells"
 
-ohai  chsh -s "$HOMEBREW_PREFIX/bin/bash"
-execute chsh -s "$HOMEBREW_PREFIX/bin/bash"
+exec_v () {
+    ohai "$@"
+    "$@"
+}
 
-brew tap homebrew/cask-fonts
-brew install --cask font-jetbrains-mono-nerd-font
+finger "$USER" | grep "$HOMEBREW_PREFIX/bin/bash" >/dev/null || {
+    exec_v chsh -s "$HOMEBREW_PREFIX/bin/bash"
+}
 
-cd "$HOME"
-git init
-git remote | grep -e "^bush$" >/dev/null || git remote add -f bush https://github.com/xko/bush
-git merge bush/mac
+exec_v brew tap homebrew/cask-fonts
+exec_v brew install --cask font-jetbrains-mono-nerd-font
 
-brew install --cask iterm2
+exec_v cd "$HOME"
+exec_v git init
+git remote | grep -e "^bush$" >/dev/null || exec_v git remote add -f bush https://github.com/xko/bush
+exec_v git merge bush/mac
+
+exec_v brew install --cask iterm2
