@@ -5,6 +5,8 @@ bush! () {
     source $BUSH/rc
 }
 
+b.oneline
+
 echo "-> $BUSH"
 _sw_all=$(b.stopwatch)
 for _f in $(b.files "$BUSH/rc.d"); do
