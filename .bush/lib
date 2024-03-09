@@ -1,15 +1,13 @@
-
+b.backsort () { rev | sort -u | rev; }
 b.files () {
-    find -L "$1" \( -type f -not -name "*-" -print \) -or \( -type d -name "*-" -prune \)  | uniq | rev | sort | rev
+    find -L "$1" \( -type f -not -name "*-" -print \) -or \( -type d -name "*-" -prune \)  | b.backsort
 }
 
-
-b.green () {
-    printf "\e[1;32m$1\e[1;0m"
-}
-b.red () {
-    printf "\e[1;31m$1\e[1;0m"
-}
+b.tesc ()   { printf "\e[%sm%s\e[0m" "$1" "$2"; }
+b.tcolor () { b.tesc "1;$1" "$2"; }
+b.green ()  { b.tcolor 32 "$1"; }
+b.red ()    { b.tcolor 31 "$1"; }
+b.bold ()   { b.tcolor 39 "$1"; }
 
 b.redgreen () {
     [[ "$1" == "0" ]] && b.green "$1" 
@@ -54,7 +52,6 @@ b.yes? () {
     b.linesep
     [[ $REPLY =~ ^[Yy]$ ]] 
 } 
-
 
 b.have? () {
     type $1 &>/dev/null && return 0
