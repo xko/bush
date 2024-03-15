@@ -4,7 +4,7 @@ export SDKMAN_DIR="$HOME/.sdkman"
 sdkman.installed. () {
     b.have? "$SDKMAN_DIR/bin/sdkman-init.sh" && return 0 
     b.yes? "Install sdkman?" || return 1
-    b.morelines
+    b.morelines!
     curl -s "https://get.sdkman.io?rcupdate=false" | bash
 }
 

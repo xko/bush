@@ -1,22 +1,19 @@
 BUSH=${BUSH:-$(dirname ${BASH_SOURCE[0]})}
 source $BUSH/lib
 
-bush! () {
-    source $BUSH/rc
-}
-
+b! "-> $BUSH"
 b.oneline
 
-echo "-> $BUSH"
 _sw_all=$(b.stopwatch)
 for _f in $(b.files "$BUSH/rc.d"); do
-    printf "%-60s " "-> $_f"
+    b! "$(printf "%-60s " "-> $_f")"
     _sw_one=$(b.stopwatch)
     source $_f 
-    _status=$(b.redgreen $?)
-    b.oneline || printf "%-62s " "↑"
-    echo -n "$_status <- "; eval "$_sw_one"; echo
+    _err="$(b.painterr)"
+    b.oneline! && b! "$(printf "%-59s")"
+    b! "$_err <- $(eval "$_sw_one")"
+    echo 
 done
-echo -n "<- "
-eval "$_sw_all"; echo
-unset b_1linemode
+
+b! "<- $(eval "$_sw_all")"
+b.morelines && b!
