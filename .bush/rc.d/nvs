@@ -1,10 +1,9 @@
 export NVS_HOME="$HOME/.nvs"
 
 nvs.installed. () {
-    b.have? "$NVS_HOME/nvs.sh" && return 0 
-    b.yes? "Install nvs?" || return 1
+    b.have! "$NVS_HOME/nvs.sh" && return 0
     b.morelines!
-    (set -x; git clone https://github.com/jasongin/nvs $NVS_HOME)
+    b.run? git clone https://github.com/jasongin/nvs "$NVS_HOME"
 }
 
 nvs.loaded? () {

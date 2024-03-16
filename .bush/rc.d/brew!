@@ -16,11 +16,10 @@ export PATH="/opt/homebrew/opt/python3/libexec/bin:$PATH"
 brew.deps. () {
     local brewfile=${1:-$BUSH/Brewfile}
     [[ -f "$brewfile" ]] || return 0
-    brew bundle check -q --file "$brewfile" >/dev/null 2>&1 && return 0
+    brew bundle check -q --file "$brewfile" &>/dev/null && return 0
     b.morelines!
-    brew bundle check -v --file "$brewfile" && return 0
-    b.yes? "Install?" || return 2        
-    brew bundle -q --file "$brewfile" --no-lock 
+    b.run! brew bundle check -v --file "$brewfile" && return 0
+    b.run? brew bundle -q --file "$brewfile" --no-lock 
 }
 
 brew.deps. || return $?
