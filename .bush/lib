@@ -5,9 +5,9 @@ b.files () {
 
 b.tesc ()   { printf "\e[%sm%s\e[0m" "$1" "$2"; }
 b.tcolor () { b.tesc "1;$1" "$2"; }
-b.green ()  { b.tcolor 32 "$1"; }
-b.red ()    { b.tcolor 31 "$1"; }
-b.bold ()   { b.tcolor 39 "$1"; }
+b.green ()  { b.tcolor  32  "$*"; }
+b.red ()    { b.tcolor  31  "$*"; }
+b.bold ()   { b.tcolor  39  "$*"; }
 
 b.painterr () {
     local err="${1:-$?}"
