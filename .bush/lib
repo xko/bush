@@ -23,23 +23,23 @@ b.stopwatch () {
 } 
 
 b.oneline () {
-    [[ "$BUSH_1LINE" ]] && return 1
+    [[ "${BUSH_1LINE-}" ]] && return 1
     BUSH_1LINE=true
     return 0
 }
 b.morelines () { 
-    [[ "$BUSH_1LINE" ]] || return 1
+    [[ "${BUSH_1LINE-}" ]] || return 1
     unset BUSH_1LINE
     return 0
 }
 
 b.linesep () { # https://stackoverflow.com/a/15184414/1964213 - trailing new line 
-    [[ "$BUSH_MUTE" ]] && return 0 
-    [[ "$BUSH_1LINE" ]] && echo -n " " || echo    
+    [[ "${BUSH_MUTE-}" ]] && return 0
+    [[ "${BUSH_1LINE-}" ]] && echo -n " " || echo
 }
 
 b! () {
-    [[ "$BUSH_MUTE" ]] && return 1 
+    [[ "${BUSH_MUTE-}" ]] && return 1
     echo -n "$*"
     b.linesep
 }
@@ -54,21 +54,21 @@ b.oneline! () {
 
 b.run! () {
     b! "$(b.bold \$) $*"
-    [[ "$BUSH_MUTE" ]] && "$@" &>/dev/null && return
+    [[ "${BUSH_MUTE-}" ]] && "$@" &>/dev/null && return
     "$@"
 }
 
 b.run? () {
     b! "$(b.bold \$) $*"
     b? || return 1
-    [[ "$BUSH_MUTE" ]] && "$@" &>/dev/null && return
+    [[ "${BUSH_MUTE-}" ]] && "$@" &>/dev/null && return
     "$@"
 }
 
 b? () {
-    [[ "$BUSH_ALL_YES" ]] && return 0
-    [[ "$BUSH_ALL_NO"  ]] && return 1
-    [[ "$BUSH_MUTE"    ]] && return 100
+    [[ "${BUSH_ALL_YES-}" ]] && return 0
+    [[ "${BUSH_ALL_NO-}"  ]] && return 1
+    [[ "${BUSH_MUTE-}"    ]] && return 100
 
     local prompt="${1:-"Ok?"}"
     read -p "$(b.blue "$prompt") " -n 1 -r
