@@ -2,14 +2,12 @@
 
 
 powerline? () {
-    b.have? powerline-go && return 0
-    b.yes? " Install?" || return 1
-    b.have? go || return 22
-    b.morelines
-    (set -x; go install github.com/justjanne/powerline-go@latest)
+    b.have! powerline-go && return 0
+    b.morelines!
+    b.run go install github.com/justjanne/powerline-go@latest
 }
 
-powerline? || return $?
+powerline? || return
 
 
 [ $WSL_DISTRO_NAME ] && export _os_icon= || export _os_icon=  # <<< don't depend on wsl here
