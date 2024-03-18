@@ -22,50 +22,55 @@ b.stopwatch () {
     echo -n "perl -MTime::HiRes=time -e 'printf \"%.3f\", time - $start'"
 } 
 
-b.oneline () {
+b.oneline_ () {
     [[ "${BUSH_1LINE-}" ]] && return 1
     BUSH_1LINE=true
     return 0
 }
-b.morelines () { 
+
+b.morelines_ () {
     [[ "${BUSH_1LINE-}" ]] || return 1
     unset BUSH_1LINE
     return 0
 }
 
-b.linesep () { # https://stackoverflow.com/a/15184414/1964213 - trailing new line 
+b.linesep () { # https://stackoverflow.com/a/15184414/1964213 - trailing new line
     [[ "${BUSH_MUTE-}" ]] && return 0
     [[ "${BUSH_1LINE-}" ]] && echo -n " " || echo
 }
 
-b! () {
+b.say () {
     [[ "${BUSH_MUTE-}" ]] && return 1
     echo -n "$*"
     b.linesep
 }
 
-b.morelines! () {
-    b.morelines && b! "↓"
+b.morelines () {
+    b.morelines_ && b.say "↓"
 }
 
-b.oneline! () {
-    b.oneline   && b! "↑" 
+b.oneline () {
+    b.oneline_   && b.say "↑"
 }
 
-b.run! () {
-    b! "$(b.bold \$) $*"
+b.run_ () {
     [[ "${BUSH_MUTE-}" ]] && "$@" &>/dev/null && return
     "$@"
+}
+
+b.run () {
+    b.say "$(b.bold \$) $*"
+    b.run_ "$@"
 }
 
 b.run? () {
-    b! "$(b.bold \$) $*"
-    b? || return 1
+    b.say "$(b.bold \$) $*"
+    b.ask || return 1
     [[ "${BUSH_MUTE-}" ]] && "$@" &>/dev/null && return
     "$@"
 }
 
-b? () {
+b.ask () {
     [[ "${BUSH_ALL_YES-}" ]] && return 0
     [[ "${BUSH_ALL_NO-}"  ]] && return 1
     [[ "${BUSH_MUTE-}"    ]] && return 100
@@ -76,7 +81,7 @@ b? () {
     [[ $REPLY =~ ^[Yy]$ ]] 
 } 
 
-b.have () {
+b.havee_ () {
     type $1 &>/dev/null && return 0
     [[ "$1" == */ ]]  && [[ -d "$1" ]] && return 0
     [[ "$1" == /* ]]  && [[ -r "$1" ]] && return 0
@@ -84,8 +89,8 @@ b.have () {
     return 1
 }
 
-b.have! () {
-    b.have "$1" && return 0
-    b! "${2:-"Missing $1!"}"
-    return 1      
+b.have () {
+    b.havee_ "$1" && return 0
+    b.say "${2:-"Missing $1!"}"
+    return 1
 }

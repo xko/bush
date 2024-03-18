@@ -1,19 +1,22 @@
 #! /usr/bin/env bash
 eval "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-execute_sudo bash -c "printf '%s\n%s\n' \"$HOMEBREW_PREFIX/bin\" \"\$(cat /etc/paths)\" > /etc/paths"
+
+BUSH_URL=${BUSH_URL:-https://raw.githubusercontent.com/xko/bush/mac/.bush}
+eval "$(curl -fsSL "$BUSH_URL/lib")"
 
 eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
-curl -fsSL https://raw.githubusercontent.com/xko/bush/mac/.bush/Brewfile | brew bundle -q --file=- --no-lock
 
-execute_sudo bash -c "echo $HOMEBREW_PREFIX/bin/bash >> /etc/shells"
+b!     "Install the default dependencies:"
+b.run? "curl -fsSL \""$BUSH_URL/Brewfile"\" | brew bundle -q --file=- --no-lock"
 
-exec_v () {
-    ohai "$@"
-    "$@"
-}
+b!     "Permanently add brew to the path:"
+b.run? "sudo sed -i.old '1s;^;$HOMEBREW_PREFIX/bin;' /etc/paths"
 
 finger "$USER" | grep "$HOMEBREW_PREFIX/bin/bash" >/dev/null || {
-    exec_v chsh -s "$HOMEBREW_PREFIX/bin/bash"
+    b!     "Set brew-installed bash to allowed shells:"
+    b.run? echo "$HOMEBREW_PREFIX/bin/bash" \| sudo tee -a /etc/shells
+    b!     "Set brew-installed bash as default:"
+    b.run? chsh -s "$HOMEBREW_PREFIX/bin/bash"
 }
 
 exec_v brew tap homebrew/cask-fonts

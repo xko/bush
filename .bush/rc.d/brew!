@@ -1,7 +1,7 @@
 brew. () {
     [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)" && return 0
     [[ -x /usr/local/bin/brew ]] && eval "$(/usr/local/bin/brew shellenv)" && return 0
-    b! "Brew is missing! Pease install from https://brew.sh/"
+    b.say "Brew is missing! Pease install from https://brew.sh/"
     return 1
 }
 
@@ -18,7 +18,7 @@ brew.deps. () {
     [[ -f "$brewfile" ]] || return 0
     brew bundle check -q --file "$brewfile" &>/dev/null && return 0
     b.morelines!
-    b.run! brew bundle check -v --file "$brewfile" && return 0
+    b.run brew bundle check -v --file "$brewfile" && return 0
     b.run? brew bundle -q --file "$brewfile" --no-lock 
 }
 

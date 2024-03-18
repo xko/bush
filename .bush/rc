@@ -1,19 +1,19 @@
 BUSH=${BUSH:-$(dirname ${BASH_SOURCE[0]})}
 source $BUSH/lib
 
-b! "-> $BUSH"
+b.say "-> $BUSH"
 b.oneline
 
 _sw_all=$(b.stopwatch)
 for _f in $(b.files "$BUSH/rc.d"); do
-    b! "$(printf "%-60s " "-> $_f")"
+    b.say "$(printf "%-60s " "-> $_f")"
     _sw_one=$(b.stopwatch)
     source $_f 
     _err="$(b.painterr)"
-    b.oneline! && b! "$(printf "%-59s")"
-    b! "$_err <- $(eval "$_sw_one")"
+    b.oneline && b.say "$(printf "%-59s")"
+    b.say "$_err <- $(eval "$_sw_one")"
     echo 
 done
 
-b! "<- $(eval "$_sw_all")"
-b.morelines && b!
+b.say "<- $(eval "$_sw_all")"
+b.morelines && b.say
