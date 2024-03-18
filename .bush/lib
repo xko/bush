@@ -81,7 +81,7 @@ b.ask () {
     [[ $REPLY =~ ^[Yy]$ ]] 
 } 
 
-b.havee_ () {
+b.have_ () {
     type $1 &>/dev/null && return 0
     [[ "$1" == */ ]]  && [[ -d "$1" ]] && return 0
     [[ "$1" == /* ]]  && [[ -r "$1" ]] && return 0
@@ -90,7 +90,7 @@ b.havee_ () {
 }
 
 b.have () {
-    b.havee_ "$1" && return 0
+    b.have_ "$1" && return 0
     b.say "${2:-"Missing $1!"}"
     return 1
 }
