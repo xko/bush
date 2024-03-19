@@ -49,15 +49,24 @@ b.run_ () {
     eval "$@"
 }
 
+b.sayerr () {
+    local err="$?"
+    [[ "${BUSH_1LINE-}" ]] && b.say "<-- $(b.painterr $err)"
+    [[ "${BUSH_1LINE-}" ]] || b.say "↑__ $(b.painterr $err)"
+    return $err
+}
+
 b.run () {
     b.say "$(b.bold \$) $*"
     b.run_ "$@"
+    b.sayerr
 }
 
 b.run? () {
     b.say "$(b.bold \$) $*"
     b.ask || return 1
     b.run_ "$@"
+    b.sayerr
 }
 
 b.ask () {
