@@ -41,7 +41,7 @@ b.morelines () {
 
 b.linesep () { # https://stackoverflow.com/a/15184414/1964213 - trailing new line
     [[ "${BUSH_MUTE-}" ]] && return 0
-    [[ "${BUSH_1LINE-}" ]] && echo -n " " || echo
+    [[ "${BUSH_1LINE-}" ]] || echo
 }
 
 b.run_ () {
@@ -67,7 +67,7 @@ b.ask () {
 
     local prompt="${1:-"Ok?"}"
     read -p "$(b.blue "$prompt") " -n 1 -r
-    b.linesep
+    b.say " " && b.linesep
     [[ $REPLY =~ ^[Yy]$ ]] 
 } 
 
