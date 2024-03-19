@@ -6,25 +6,26 @@ eval "$(curl -fsSL "$BUSH_URL/lib")"
 
 eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
 
-b!     "Install the default dependencies:"
+b.say  "Install the default dependencies:"
 b.run? "curl -fsSL \""$BUSH_URL/Brewfile"\" | brew bundle -q --file=- --no-lock"
 
-b!     "Permanently add brew to the path:"
-b.run? "sudo sed -i.old '1s;^;$HOMEBREW_PREFIX/bin;' /etc/paths"
+b.say  "Permanently add brew to the path:"
+b.run? "sudo sed -i.old '1s;^;$HOMEBREW_PREFIX/bin\n;' /etc/paths"
 
 finger "$USER" | grep "$HOMEBREW_PREFIX/bin/bash" >/dev/null || {
-    b!     "Set brew-installed bash to allowed shells:"
+    b.say  "Add brew-installed bash to allowed shells:"
     b.run? echo "$HOMEBREW_PREFIX/bin/bash" \| sudo tee -a /etc/shells
-    b!     "Set brew-installed bash as default:"
+    b.say  "Set brew-installed bash as default:"
     b.run? chsh -s "$HOMEBREW_PREFIX/bin/bash"
 }
 
-exec_v brew tap homebrew/cask-fonts
-exec_v brew install --cask font-jetbrains-mono-nerd-font
+b.run? "cd $HOME ; git init"
+b.painterr
 
-exec_v cd "$HOME"
-exec_v git init
-git remote | grep -e "^bush$" >/dev/null || exec_v git remote add -f bush https://github.com/xko/bush
+git remote | grep -e "^bush$" >/dev/null || {
+    b.say
+
+} exec_v git remote add -f bush https://github.com/xko/bush
 exec_v git merge bush/mac
 
 exec_v brew install --cask iterm2
