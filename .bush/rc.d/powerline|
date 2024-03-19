@@ -3,7 +3,7 @@
 
 powerline? () {
     b.have powerline-go && return 0
-    b.morelines!
+    b.morelines
     b.run go install github.com/justjanne/powerline-go@latest
 }
 

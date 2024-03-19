@@ -2,7 +2,7 @@ BUSH=${BUSH:-$(dirname ${BASH_SOURCE[0]})}
 source $BUSH/lib
 
 b.say "-> $BUSH"
-b.oneline_
+b.oneline ""
 
 _sw_all=$(b.stopwatch)
 for _f in $(b.files "$BUSH/rc.d"); do
@@ -16,4 +16,4 @@ for _f in $(b.files "$BUSH/rc.d"); do
 done
 
 b.say "<- $(eval "$_sw_all")"
-b.morelines && b.say
+b.morelines ""

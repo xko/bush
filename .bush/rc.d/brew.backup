@@ -1,5 +1,5 @@
 b.have brew || return 1
 find "$HOME/.Brewfile.$HOSTNAME" -mtime -1 2>/dev/null | read && return 0
 
-b.morelines!
+b.morelines
 b.run brew bundle dump --force --brew --tap --cask --file="$HOME/.Brewfile.$HOSTNAME"

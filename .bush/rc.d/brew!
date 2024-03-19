@@ -17,7 +17,7 @@ brew.deps. () {
     local brewfile=${1:-$BUSH/Brewfile}
     [[ -f "$brewfile" ]] || return 0
     brew bundle check -q --file "$brewfile" &>/dev/null && return 0
-    b.morelines!
+    b.morelines
     b.run brew bundle check -v --file "$brewfile" && return 0
     b.run? brew bundle -q --file "$brewfile" --no-lock 
 }

@@ -23,29 +23,25 @@ b.say () {
     b.linesep
 }
 
-b.oneline_ () {
+b.oneline () {
     [[ "${BUSH_1LINE-}" ]] && return 1
     BUSH_1LINE=true
+    local marker=${1-"↑"}
+    b.say "$marker"
     return 0
 }
 
-b.morelines_ () {
+b.morelines () {
     [[ "${BUSH_1LINE-}" ]] || return 1
     unset BUSH_1LINE
+    local marker=${1-"↓"}
+    b.say "$marker"
     return 0
 }
 
 b.linesep () { # https://stackoverflow.com/a/15184414/1964213 - trailing new line
     [[ "${BUSH_MUTE-}" ]] && return 0
     [[ "${BUSH_1LINE-}" ]] && echo -n " " || echo
-}
-
-b.morelines () {
-    b.morelines_ && b.say "↓"
-}
-
-b.oneline () {
-    b.oneline_   && b.say "↑"
 }
 
 b.run_ () {
