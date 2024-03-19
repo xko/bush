@@ -17,10 +17,11 @@ b.painterr () {
     fi
 }
 
-b.stopwatch () {
-    local start=$(perl -MTime::HiRes=time -e 'printf "%.9f", time')
-    echo -n "perl -MTime::HiRes=time -e 'printf \"%.3f\", time - $start'"
-} 
+b.say () {
+    [[ "${BUSH_MUTE-}" ]] && return 1
+    echo -n "$*"
+    b.linesep
+}
 
 b.oneline_ () {
     [[ "${BUSH_1LINE-}" ]] && return 1
@@ -37,12 +38,6 @@ b.morelines_ () {
 b.linesep () { # https://stackoverflow.com/a/15184414/1964213 - trailing new line
     [[ "${BUSH_MUTE-}" ]] && return 0
     [[ "${BUSH_1LINE-}" ]] && echo -n " " || echo
-}
-
-b.say () {
-    [[ "${BUSH_MUTE-}" ]] && return 1
-    echo -n "$*"
-    b.linesep
 }
 
 b.morelines () {
@@ -93,3 +88,8 @@ b.have () {
     b.say "${2:-"Missing $1!"}"
     return 1
 }
+
+b.stopwatch () {
+    local start=$(perl -MTime::HiRes=time -e 'printf "%.9f", time')
+    echo -n "perl -MTime::HiRes=time -e 'printf \"%.3f\", time - $start'"
+} 
